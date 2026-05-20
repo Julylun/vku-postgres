@@ -32,7 +32,39 @@ streamlit run app.py
 *Giao diện sẽ tự bật lên ở `http://localhost:8501`*
 
 ---
-## 🛡️ Tài khoản Test (Sau khi chạy Pipeline thành công)
+## 📁 3. Cấu trúc thư mục (Folder Structure)
+Dự án được thiết kế theo chuẩn module hóa, dễ dàng bảo trì và mở rộng:
+
+```text
+supermarket/
+│
+├── core/                # Logic xử lý chính (Backend)
+│   ├── db.py            # Hàm kết nối PostgreSQL và truy xuất dữ liệu (dùng Pandas)
+│   └── pipeline.py      # Script thực thi tuần tự các file SQL để build Data Warehouse
+│
+├── data/                # Chứa file dữ liệu thô (đã cấu hình .gitignore)
+│   └── supermarket.csv  # Dữ liệu nguồn (Raw data)
+│
+├── schemas/             # File SQL phân tách logic (DDL & DML)
+│   ├── 1_create_staging_tabel.sql
+│   ├── ... (các bước transform, view, index)
+│   └── 12_rbac_security.sql
+│
+├── tabs/                # Giao diện UI chia nhỏ theo từng Tab (Streamlit)
+│   ├── pipeline.py      # Giám sát tiến trình chạy
+│   ├── explorer.py      # Truy vấn trực tiếp các Bảng/View
+│   ├── dashboard.py     # Vẽ biểu đồ KPI, Line, Pie
+│   ├── interactive.py   # Test Trigger, Procedure, Function
+│   └── migration.py     # Di trú dữ liệu (Backup/Restore)
+│
+├── app.py               # File gốc khởi chạy ứng dụng Web
+├── requirements.txt     # Danh sách thư viện Python
+├── db_backup.sh         # Script CLI để dump database
+└── db_restore.sh        # Script CLI để restore database
+```
+
+---
+## 🛡️ 4. Tài khoản Test (Sau khi chạy Pipeline thành công)
 Hệ thống RBAC tự động sinh ra 3 tài khoản để bạn kiểm thử bảo mật:
 - **`admin_user` / `admin123`**: Toàn quyền thao tác, dùng để chạy Data Pipeline và Backup.
 - **`entry_user` / `entry123`**: Quyền vận hành (Chỉ Insert/Update, gọi Trigger).
