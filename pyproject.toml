@@ -1,0 +1,10 @@
+[project]
+name = "supermarket"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "psycopg2-binary>=2.9.12",
+    "streamlit>=1.57.0",
+]

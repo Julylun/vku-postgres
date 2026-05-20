@@ -1,0 +1,48 @@
+# ==========================================
+# 1. Thư mục và file dữ liệu (Cực kỳ quan trọng)
+# ==========================================
+# KHÔNG BAO GIỜ push dữ liệu nhạy cảm hoặc file database lớn lên Git
+data/*.csv
+data/*.xlsx
+data/*.json
+backups/
+*.dump
+*.sql.gz
+*.backup
+*.bak
+
+# Nếu bạn muốn giữ lại thư mục nhưng không muốn lấy dữ liệu bên trong:
+!data/.gitkeep
+!backups/.gitkeep
+
+# ==========================================
+# 2. Cấu hình & Mật khẩu (Security)
+# ==========================================
+# Các file chứa biến môi trường (credentials, mật khẩu database)
+.env
+.env.*
+!.env.example
+secrets.json
+
+# ==========================================
+# 3. Python & Môi trường ảo (Virtual Environment)
+# ==========================================
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+htmlcov/
+venv/
+env/
+.venv/
+
+# ==========================================
+# 4. Streamlit & IDE
+# ==========================================
+.streamlit/secrets.toml
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
