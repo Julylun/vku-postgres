@@ -20,9 +20,9 @@ def render_pipeline_tab(db_params, db_password, db_user):
     if start_btn:
         if not db_password:
             st.warning("⚠️ Vui lòng nhập mật khẩu Database ở thanh bên (Sidebar).")
-        elif db_user != "postgres" and db_user != "admin_user":
+        elif db_user != "postgres":
             st.error(
-                "⚠️ Bạn cần dùng tài khoản 'postgres' hoặc 'admin_user' để có quyền DROP/CREATE database pipeline!"
+                "⚠️ Bắt buộc phải dùng tài khoản Root/Superuser (thường là 'postgres') để chạy Pipeline! Tiến trình này chứa các lệnh hệ thống (DROP SCHEMA, Quản lý Roles) mà các User thường không được phép chạy."
             )
         else:
             run_pipeline(db_params, progress_bar, status_text, log_area, st)

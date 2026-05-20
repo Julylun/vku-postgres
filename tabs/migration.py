@@ -67,35 +67,50 @@ def render_migration_tab(db_params, db_password, db_user, db_name, db_host, db_p
     with col_m2:
         st.subheader("2. Khôi phục dữ liệu (Restore - pg_restore)")
         st.caption(
-            "Khôi phục bản backup mới nhất vào Database (thường là DB trắng khi nâng cấp)."
+            "Khôi phục bản backup đã chọn vào Database (thường là DB trắng khi nâng cấp)."
         )
 
         target_db = st.text_input("Database Đích để Restore:", value=f"{db_name}_new")
 
+        backup_dir = os.path.join(BASE_DIR, "backups")
+
+        # Load danh sách file backup
+        dump_files = []
+        if os.path.exists(backup_dir):
+            dump_files = sorted(
+                [
+                    os.path.join(backup_dir, f)
+                    for f in os.listdir(backup_dir)
+                    if f.endswith(".dump")
+                ],
+                key=os.path.getctime,
+                reverse=True,
+            )
+
+        latest_file = st.selectbox(
+            "📂 Chọn file Backup để Restore:",
+            options=dump_files,
+            format_func=lambda x: (
+                os.path.basename(x) if x else "Không có file backup nào"
+            ),
+            index=0 if dump_files else None,
+        )
+
         if st.button("♻️ Tiến hành Restore", use_container_width=True):
-            if db_user != "postgres" and db_user != "admin_user":
-                st.error("⚠️ Cần tài khoản admin để chạy pg_restore.")
+            if db_user != "postgres":
+                st.error(
+                    "⚠️ Bắt buộc dùng tài khoản Superuser ('postgres') để chạy pg_restore vì lệnh này sẽ can thiệp/xóa các cấu trúc bảng cũ."
+                )
             else:
                 backup_dir = os.path.join(BASE_DIR, "backups")
                 if not os.path.exists(backup_dir) or not os.listdir(backup_dir):
                     st.warning("⚠️ Không có file backup nào trong hệ thống!")
                 else:
-                    # Lấy file mới nhất
-                    files = sorted(
-                        [
-                            os.path.join(backup_dir, f)
-                            for f in os.listdir(backup_dir)
-                            if f.endswith(".dump")
-                        ],
-                        key=os.path.getctime,
-                        reverse=True,
-                    )
-                    if not files:
-                        st.warning("⚠️ Không tìm thấy file `.dump` nào!")
+                    if not latest_file:
+                        st.warning("⚠️ Vui lòng chọn một file `.dump`!")
                     else:
-                        latest_file = files[0]
                         st.info(
-                            f"📁 Dùng file backup: `{os.path.basename(latest_file)}`"
+                            f"📁 Đang Restore từ file: `{os.path.basename(latest_file)}`"
                         )
 
                         env = os.environ.copy()

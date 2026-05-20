@@ -84,11 +84,11 @@ CREATE TABLE orders_partitioned (
 PARTITION BY RANGE(order_date);
 
 -- Các bảng phân vùng vật lý theo năm
-CREATE TABLE orders_2015 
+CREATE TABLE orders_2015
 PARTITION OF orders_partitioned
 FOR VALUES FROM ('2015-01-01') TO ('2016-01-01');
 
-CREATE TABLE orders_2016 
+CREATE TABLE orders_2016
 PARTITION OF orders_partitioned
 FOR VALUES FROM ('2016-01-01') TO ('2017-01-01');
 
