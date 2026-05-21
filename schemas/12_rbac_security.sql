@@ -74,9 +74,14 @@ GRANT USAGE, SELECT, UPDATE ON SEQUENCE sales_audit_audit_id_seq TO data_entry;
 -- Cho phép chạy Stored Procedure cập nhật dữ liệu
 GRANT EXECUTE ON PROCEDURE pr_update_ship_mode(VARCHAR, VARCHAR) TO data_entry;
 GRANT EXECUTE ON PROCEDURE pr_increase_sales(NUMERIC) TO data_entry;
+GRANT EXECUTE ON PROCEDURE pr_reassign_customer_segment(VARCHAR, VARCHAR) TO data_entry;
+
+-- Quyền cao nhất cho admin
+GRANT EXECUTE ON PROCEDURE pr_delete_customer_completely(VARCHAR) TO data_admin;
 
 -- Cho phép entry_user chạy Function liên quan đến Trigger (bắt buộc để kích hoạt Trigger thành công)
 GRANT EXECUTE ON FUNCTION fn_log_sales_update() TO data_entry;
+GRANT EXECUTE ON FUNCTION fn_validate_ship_date() TO data_entry;
 
 
 -- ==========================================

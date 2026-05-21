@@ -100,6 +100,56 @@ def render_dashboard_tab(db_params):
 
             st.divider()
 
+            # --- BÁO CÁO NÂNG CAO (VIEWS MỚI) ---
+            st.subheader("📊 Báo cáo nâng cao (Views mới)")
+            col_v1, col_v2 = st.columns(2)
+
+            with col_v1:
+                st.markdown("**1. Khách hàng VIP (Customer Lifetime Value)**")
+                st.caption("Dữ liệu từ View `v_customer_lifetime_value`")
+                clv_df = fetch_data(
+                    "SELECT * FROM v_customer_lifetime_value ORDER BY total_spent DESC LIMIT 5;",
+                    db_params,
+                )
+                if not clv_df.empty:
+                    st.dataframe(clv_df, use_container_width=True, hide_index=True)
+
+            with col_v2:
+                st.markdown("**2. Báo cáo giao hàng trễ hạn**")
+                st.caption("Dữ liệu từ View `v_delayed_shipments`")
+                delayed_df = fetch_data(
+                    "SELECT shipping_status, COUNT(*) as total_orders FROM v_delayed_shipments GROUP BY shipping_status;",
+                    db_params,
+                )
+                if not delayed_df.empty:
+                    fig_delayed = px.pie(
+                        delayed_df,
+                        values="total_orders",
+                        names="shipping_status",
+                        hole=0.4,
+                        color="shipping_status",
+                        color_discrete_map={"On Time": "green", "Delayed": "red"},
+                    )
+                    st.plotly_chart(fig_delayed, use_container_width=True)
+
+            st.markdown("**3. Top 5 Sản phẩm bán chạy theo tháng (Function)**")
+            st.caption("Sử dụng hàm `fn_top_products_by_month`")
+            selected_month = st.text_input("Nhập tháng (YYYY-MM):", value="2016-11")
+            if selected_month:
+                top_products_df = fetch_data(
+                    "SELECT * FROM fn_top_products_by_month(%s, 5);",
+                    db_params,
+                    (selected_month,),
+                )
+                if not top_products_df.empty:
+                    st.dataframe(
+                        top_products_df, use_container_width=True, hide_index=True
+                    )
+                else:
+                    st.info(f"Không có dữ liệu bán hàng trong tháng {selected_month}")
+
+            st.divider()
+
             # --- KHAI THÁC JSONB & ARRAY ---
             st.subheader("🔎 Tra cứu Dữ liệu Nâng cao (Advanced Types)")
             col_adv1, col_adv2 = st.columns(2)
